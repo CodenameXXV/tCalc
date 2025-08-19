@@ -18,7 +18,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
-        /* Ваш CSS залишається без змін */
         * {
             margin: 0;
             padding: 0;
@@ -380,6 +379,60 @@
             background: #2E4A82;
         }
 
+        /* === PWA Install Prompt === */
+        .install-prompt {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-color);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            padding: 15px;
+            z-index: 1001;
+            border-top: 1px solid #3A5A9E;
+        }
+
+        .install-content {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.5;
+        }
+
+        .install-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .install-btn {
+            background: #3A5A9E;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .install-btn:hover {
+            background: #2E4A82;
+        }
+
+        .install-btn-outline {
+            background: transparent;
+            border: 1px solid #3A5A9E;
+            color: #3A5A9E;
+        }
+
+        .install-btn-outline:hover {
+            background: #f0f0f0;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -411,6 +464,7 @@
             75% { transform: translateX(5px); }
         }
 
+        /* --- Адаптивність --- */
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -563,6 +617,7 @@
         </div>
     </div>
 
+    <!-- Модальне вікно для графіка -->
     <div id="chartModal" class="modal">
         <div class="modal-content">
             <span class="close" id="closeModal">&times;</span>
@@ -574,6 +629,13 @@
         </div>
     </div>
 
+    <!-- PWA Install Prompt -->
+    <div id="installPrompt" class="install-prompt" style="display: none;">
+        <div class="install-content" id="installPromptText">
+            <!-- Текст буде динамічним (Android або iOS) -->
+        </div>
+    </div>
+
     <script>
         class GradeCalculator {
             constructor() {
@@ -581,7 +643,9 @@
                 this.inputBuffer = "";
                 this.timer = null;
                 this.settings = this.loadSettings();
+                this.deferredPrompt = null;
 
+                // Елементи
                 this.displayMain = document.getElementById('displayMain');
                 this.displayInfo = document.getElementById('displayInfo');
                 this.themeBtn = document.getElementById('themeBtn');
@@ -592,6 +656,8 @@
                 this.chartModal = document.getElementById('chartModal');
                 this.closeModal = document.getElementById('closeModal');
                 this.downloadChartBtn = document.getElementById('downloadChartBtn');
+                this.installPrompt = document.getElementById('installPrompt');
+                this.installPromptText = document.getElementById('installPromptText');
 
                 this.chart = null;
 
@@ -602,6 +668,7 @@
                 this.applyTheme();
                 this.showLevelCheckbox.checked = this.settings.showLevel !== false;
 
+                // === Обробка інструкцій ===
                 const toggle = document.getElementById('howToToggle');
                 const list = document.getElementById('howToList');
                 const arrow = toggle.querySelector('.toggle-arrow');
@@ -617,6 +684,7 @@
                     }
                 });
 
+                // === Події ===
                 this.themeBtn.addEventListener('click', () => this.toggleTheme());
                 this.graphBtn.addEventListener('click', () => this.showHistogram());
                 this.resultBtn.addEventListener('click', () => this.calculateResult());
@@ -625,6 +693,7 @@
                 this.closeModal.addEventListener('click', () => this.closeChart());
                 this.downloadChartBtn.addEventListener('click', () => this.downloadChart());
 
+                // Кнопки оцінок
                 document.querySelectorAll('[data-grade]').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         this.addButtonAnimation(e.target);
@@ -632,22 +701,103 @@
                     });
                 });
 
+                // Клавіатура
                 document.addEventListener('keydown', (e) => this.keyPress(e));
+
+                // Закриття модального вікна
                 this.chartModal.addEventListener('click', (e) => {
                     if (e.target === this.chartModal) this.closeChart();
                 });
 
+                // Реєстрація Service Worker
                 this.registerServiceWorker();
+
+                // Показати підказку для встановлення PWA
+                this.setupInstallPrompt();
+            }
+
+            setupInstallPrompt() {
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+                if (!isMobile || this.isAppInstalled()) return;
+
+                // Для iOS
+                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                    this.showIosInstallPrompt();
+                    return;
+                }
+
+                // Для Android
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    this.deferredPrompt = e;
+
+                    if (!localStorage.getItem('pwaInstallDismissed')) {
+                        setTimeout(() => this.showAndroidInstallPrompt(), 1500);
+                    }
+                });
+            }
+
+            showAndroidInstallPrompt() {
+                this.installPromptText.innerHTML = `
+                    <div>Хочете встановити додаток "Середній бал"?</div>
+                    <div style="font-size:12px; opacity:0.8; margin-top:4px;">Працюватиме швидко і без інтернету</div>
+                    <div class="install-buttons">
+                        <button id="installBtn" class="install-btn">Встановити</button>
+                        <button id="installLaterBtn" class="install-btn install-btn-outline">Не зараз</button>
+                    </div>
+                `;
+                this.installPrompt.style.display = 'block';
+
+                document.getElementById('installBtn').addEventListener('click', () => {
+                    if (this.deferredPrompt) {
+                        this.deferredPrompt.prompt();
+                        this.deferredPrompt.userChoice.then(() => {
+                            this.deferredPrompt = null;
+                        });
+                    }
+                    this.installPrompt.style.display = 'none';
+                    localStorage.setItem('pwaInstallDismissed', 'true');
+                });
+
+                document.getElementById('installLaterBtn').addEventListener('click', () => {
+                    this.installPrompt.style.display = 'none';
+                    localStorage.setItem('pwaInstallDismissed', 'true');
+                });
+            }
+
+            showIosInstallPrompt() {
+                if (localStorage.getItem('pwaInstallDismissed')) return;
+
+                this.installPromptText.innerHTML = `
+                    <div>Додайте на головний екран!</div>
+                    <div style="font-size:12px; opacity:0.8;">Натисніть <b>поділитися</b> → "Додати на головний екран"</div>
+                    <div class="install-buttons">
+                        <button id="iosInstallDone" class="install-btn">Зрозуміло</button>
+                    </div>
+                `;
+                this.installPrompt.style.display = 'block';
+
+                document.getElementById('iosInstallDone').addEventListener('click', () => {
+                    this.installPrompt.style.display = 'none';
+                    localStorage.setItem('pwaInstallDismissed', 'true');
+                });
+            }
+
+            isAppInstalled() {
+                return window.matchMedia('(display-mode: standalone)').matches ||
+                       window.navigator.standalone === true;
             }
 
             registerServiceWorker() {
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.register('service-worker.js')
-                        .then(reg => console.log('SW registered: ', reg))
-                        .catch(err => console.log('SW registration failed: ', err));
+                        .then(reg => console.log('SW registered'))
+                        .catch(err => console.log('SW registration failed', err));
                 }
             }
 
+            // --- Решта методів (без змін) ---
             addButtonAnimation(button) {
                 button.classList.add('btn-animate');
                 setTimeout(() => button.classList.remove('btn-animate'), 300);
@@ -709,7 +859,6 @@
                 }
 
                 const avg = this.grades.reduce((a, b) => a + b, 0) / this.grades.length;
-
                 this.displayMain.textContent = `СЕРЕДНЯ ОЦІНКА: ${avg.toFixed(2)}`;
 
                 let infoText = "";
@@ -717,7 +866,6 @@
                     infoText = `РІВЕНЬ: ${this.getLevel(avg).toUpperCase()}<br>`;
                 }
                 infoText += `Макс: ${Math.max(...this.grades)}, Мін: ${Math.min(...this.grades)}, Оцінок: ${this.grades.length}`;
-
                 this.displayInfo.innerHTML = infoText;
 
                 this.grades = [];
@@ -748,13 +896,11 @@
                 this.grades.forEach(grade => counts[grade]++);
 
                 this.chartModal.style.display = 'block';
-
                 const ctx = document.getElementById('gradeChart').getContext('2d');
 
                 if (this.chart) this.chart.destroy();
 
                 const backgroundColor = this.settings.theme === 'dark' ? '#2b2b2b' : '#ffffff';
-
                 this.chart = new Chart(ctx, {
                     type: 'bar',
                     data: {
