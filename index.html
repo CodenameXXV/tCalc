@@ -31,12 +31,27 @@
             padding: 20px;
         }
 
+        /* === ЗМІННІ ТЕМ ВИНЕСЕНІ НА РІВЕНЬ BODY === */
         .light-theme {
+            --bg-color: #fff;
+            --display-bg: #f8f8f8;
+            --button-bg: #3A5A9E;
+            --button-hover: #2E4A82;
+            --text-color: #333;
+            --item-bg: #f5f5f5;
+            --key-bg: #e8e8e8;
             background-color: #f0f0f0;
             color: #333;
         }
 
         .dark-theme {
+            --bg-color: #2b2b2b;
+            --display-bg: #1c1c1c;
+            --button-bg: #3A5A9E;
+            --button-hover: #2E4A82;
+            --text-color: #fff;
+            --item-bg: #3a3a3a;
+            --key-bg: #4a4a4a;
             background-color: #1a1a1a;
             color: #fff;
         }
@@ -175,28 +190,6 @@
             flex-direction: column;
             position: relative;
             flex-shrink: 0;
-        }
-
-        .light-theme .container,
-        .light-theme .instructions {
-            --bg-color: #fff;
-            --display-bg: #f8f8f8;
-            --button-bg: #3A5A9E;
-            --button-hover: #2E4A82;
-            --text-color: #333;
-            --item-bg: #f5f5f5;
-            --key-bg: #e8e8e8;
-        }
-
-        .dark-theme .container,
-        .dark-theme .instructions {
-            --bg-color: #2b2b2b;
-            --display-bg: #1c1c1c;
-            --button-bg: #3A5A9E;
-            --button-hover: #2E4A82;
-            --text-color: #fff;
-            --item-bg: #3a3a3a;
-            --key-bg: #4a4a4a;
         }
 
         .top-panel {
@@ -379,29 +372,26 @@
             background: #2E4A82;
         }
 
-		/* === PWA Install Prompt === */
-		.install-prompt {
-			position: fixed;
-			bottom: 0;
-			left: 0;
-			width: 100%;
-			background: var(--bg-color); /* ✅ Тепер використовуємо змінну */
-			color: var(--text-color);
-			box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-			padding: 15px;
-			z-index: 1001;
-			border-top: 1px solid #3A5A9E;
-			font-size: 14px;
-			line-height: 1.5;
-		}
+        /* === PWA Install Prompt — тепер з непрозорим фоном === */
+        .install-prompt {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-color) !important; /* ✅ Використовуємо змінну теми */
+            color: var(--text-color);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            padding: 15px;
+            z-index: 1001;
+            border-top: 1px solid #3A5A9E;
+            font-size: 14px;
+            line-height: 1.5;
+        }
 
         .install-content {
             max-width: 600px;
             margin: 0 auto;
             text-align: center;
-            font-size: 14px;
-            color: var(--text-color);
-            line-height: 1.5;
         }
 
         .install-buttons {
@@ -467,7 +457,6 @@
             75% { transform: translateX(5px); }
         }
 
-        /* --- Адаптивність --- */
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -635,7 +624,7 @@
     <!-- PWA Install Prompt -->
     <div id="installPrompt" class="install-prompt" style="display: none;">
         <div class="install-content" id="installPromptText">
-            <!-- Текст буде динамічним (Android або iOS) -->
+            <!-- Текст буде динамічним -->
         </div>
     </div>
 
@@ -648,7 +637,6 @@
                 this.settings = this.loadSettings();
                 this.deferredPrompt = null;
 
-                // Елементи
                 this.displayMain = document.getElementById('displayMain');
                 this.displayInfo = document.getElementById('displayInfo');
                 this.themeBtn = document.getElementById('themeBtn');
@@ -671,7 +659,6 @@
                 this.applyTheme();
                 this.showLevelCheckbox.checked = this.settings.showLevel !== false;
 
-                // === Обробка інструкцій ===
                 const toggle = document.getElementById('howToToggle');
                 const list = document.getElementById('howToList');
                 const arrow = toggle.querySelector('.toggle-arrow');
@@ -687,7 +674,6 @@
                     }
                 });
 
-                // === Події ===
                 this.themeBtn.addEventListener('click', () => this.toggleTheme());
                 this.graphBtn.addEventListener('click', () => this.showHistogram());
                 this.resultBtn.addEventListener('click', () => this.calculateResult());
@@ -696,7 +682,6 @@
                 this.closeModal.addEventListener('click', () => this.closeChart());
                 this.downloadChartBtn.addEventListener('click', () => this.downloadChart());
 
-                // Кнопки оцінок
                 document.querySelectorAll('[data-grade]').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         this.addButtonAnimation(e.target);
@@ -704,18 +689,12 @@
                     });
                 });
 
-                // Клавіатура
                 document.addEventListener('keydown', (e) => this.keyPress(e));
-
-                // Закриття модального вікна
                 this.chartModal.addEventListener('click', (e) => {
                     if (e.target === this.chartModal) this.closeChart();
                 });
 
-                // Реєстрація Service Worker
                 this.registerServiceWorker();
-
-                // Показати підказку для встановлення PWA
                 this.setupInstallPrompt();
             }
 
@@ -724,13 +703,11 @@
 
                 if (!isMobile || this.isAppInstalled()) return;
 
-                // Для iOS
                 if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
                     this.showIosInstallPrompt();
                     return;
                 }
 
-                // Для Android
                 window.addEventListener('beforeinstallprompt', (e) => {
                     e.preventDefault();
                     this.deferredPrompt = e;
@@ -800,7 +777,6 @@
                 }
             }
 
-            // --- Решта методів (без змін) ---
             addButtonAnimation(button) {
                 button.classList.add('btn-animate');
                 setTimeout(() => button.classList.remove('btn-animate'), 300);
