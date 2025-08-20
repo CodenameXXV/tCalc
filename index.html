@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
-    <!-- Додавання до головного екрану (iOS) -->
+    <!-- iOS PWA -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Середній бал">
@@ -31,7 +31,6 @@
             padding: 20px;
         }
 
-        /* === ЗМІННІ ТЕМ ВИНЕСЕНІ НА РІВЕНЬ BODY === */
         .light-theme {
             --bg-color: #fff;
             --display-bg: #f8f8f8;
@@ -40,6 +39,8 @@
             --text-color: #333;
             --item-bg: #f5f5f5;
             --key-bg: #e8e8e8;
+            --history-item-bg: #f9f9f9;
+            --history-item-border: #e0e0e0;
             background-color: #f0f0f0;
             color: #333;
         }
@@ -52,6 +53,8 @@
             --text-color: #fff;
             --item-bg: #3a3a3a;
             --key-bg: #4a4a4a;
+            --history-item-bg: #3a3a3a;
+            --history-item-border: #4a4a4a;
             background-color: #1a1a1a;
             color: #fff;
         }
@@ -59,9 +62,11 @@
         .main-container {
             display: flex;
             gap: 30px;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             align-items: flex-start;
+            justify-content: center;
+            padding: 0 20px;
         }
 
         .instructions {
@@ -192,6 +197,194 @@
             flex-shrink: 0;
         }
 
+        .history-panel {
+            flex: 1;
+            max-width: 350px;
+            background: var(--bg-color);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            padding: 25px;
+            min-height: 600px;
+        }
+
+        .history-panel h2 {
+            color: #3A5A9E;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+            border-bottom: 2px solid #3A5A9E;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .clear-history-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .clear-history-btn:hover {
+            background: #c82333;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 500px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--button-bg) var(--bg-color);
+        }
+
+        .history-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: var(--button-bg);
+            border-radius: 3px;
+        }
+
+        .history-item {
+            background: var(--history-item-bg);
+            border: 1px solid var(--history-item-border);
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .history-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .history-item.recent {
+            border-color: #3A5A9E;
+            box-shadow: 0 2px 8px rgba(58, 90, 158, 0.2);
+        }
+
+        .delete-item-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            transform: scale(0.9);
+        }
+
+        .delete-item-btn:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+
+        .history-item:hover .delete-item-btn {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .history-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .share-btn {
+            font-size: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s, transform 0.2s;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .share-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .history-student-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-color);
+            background: var(--item-bg);
+            border: 1px dashed transparent;
+            border-radius: 4px;
+            padding: 2px 6px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .history-student-name:focus {
+            outline: 2px solid #3A5A9E;
+            border-color: #3A5A9E;
+        }
+
+        .history-timestamp {
+            font-size: 11px;
+            color: var(--text-color);
+            opacity: 0.7;
+            margin-left: auto;
+        }
+
+        .history-grades {
+            font-size: 14px;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            font-family: monospace;
+            line-height: 1.3;
+        }
+
+        .history-result {
+            font-size: 16px;
+            font-weight: bold;
+            color: #3A5A9E;
+            margin-bottom: 5px;
+        }
+
+        .history-level {
+            font-size: 12px;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .no-history {
+            text-align: center;
+            color: var(--text-color);
+            opacity: 0.6;
+            font-style: italic;
+            margin-top: 50px;
+        }
+
         .top-panel {
             display: flex;
             justify-content: space-between;
@@ -199,7 +392,13 @@
             margin-bottom: 10px;
         }
 
-        .theme-btn, .graph-btn {
+        .left-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-btn, .graph-btn, .install-btn-top {
             background: var(--button-bg);
             color: white;
             border: none;
@@ -209,7 +408,7 @@
             font-weight: bold;
         }
 
-        .theme-btn {
+        .theme-btn, .install-btn-top {
             width: 40px;
             height: 30px;
             font-size: 16px;
@@ -221,7 +420,7 @@
             font-size: 12px;
         }
 
-        .theme-btn:hover, .graph-btn:hover {
+        .theme-btn:hover, .graph-btn:hover, .install-btn-top:hover {
             background: var(--button-hover);
             transform: translateY(-1px);
         }
@@ -229,10 +428,11 @@
         .display {
             background: var(--display-bg);
             border-radius: 8px;
-            padding: 20px 15px;
+            padding: 15px;
             margin-bottom: 10px;
             min-height: 120px;
             position: relative;
+            overflow: hidden;
         }
 
         .display-main {
@@ -240,14 +440,16 @@
             font-weight: bold;
             text-align: right;
             word-wrap: break-word;
-            line-height: 1.2;
+            line-height: 1.3;
             color: var(--text-color);
+            max-height: 100%;
+            transition: font-size 0.2s ease;
         }
 
         .display-info {
             font-size: 14px;
             text-align: right;
-            margin-top: 10px;
+            margin-top: 8px;
             line-height: 1.3;
             color: var(--text-color);
             opacity: 0.8;
@@ -372,58 +574,26 @@
             background: #2E4A82;
         }
 
-        /* === PWA Install Prompt — тепер з непрозорим фоном === */
-        .install-prompt {
+        /* Спливаюче повідомлення */
+        .toast {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: var(--bg-color) !important; /* ✅ Використовуємо змінну теми */
-            color: var(--text-color);
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            padding: 15px;
-            z-index: 1001;
-            border-top: 1px solid #3A5A9E;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .install-content {
-            max-width: 600px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .install-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
-        .install-btn {
-            background: #3A5A9E;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
             color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: background 0.3s;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 2000;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
         }
 
-        .install-btn:hover {
-            background: #2E4A82;
-        }
-
-        .install-btn-outline {
-            background: transparent;
-            border: 1px solid #3A5A9E;
-            color: #3A5A9E;
-        }
-
-        .install-btn-outline:hover {
-            background: #f0f0f0;
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         @keyframes fadeIn {
@@ -436,14 +606,23 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        @keyframes blink {
+            0% {
+                opacity: 1;
+                filter: brightness(1);
+            }
+            50% {
+                opacity: 0.7;
+                filter: brightness(1.2) saturate(1.3);
+            }
+            100% {
+                opacity: 1;
+                filter: brightness(1);
+            }
         }
 
-        .btn-animate {
-            animation: pulse 0.3s ease;
+        .btn-blink {
+            animation: blink 0.2s ease;
         }
 
         .error {
@@ -466,12 +645,8 @@
                 flex-direction: column;
                 gap: 15px;
                 margin: 0;
-            }
-
-            .instructions {
-                max-width: none;
-                order: 2;
-                padding: 20px;
+                padding: 0;
+                justify-content: flex-start;
             }
 
             .container {
@@ -482,12 +657,27 @@
                 padding: 10px;
             }
 
+            .history-panel {
+                max-width: 400px;
+                width: 100%;
+                margin: 0 auto;
+                order: 2;
+                padding: 20px;
+                min-height: auto;
+            }
+
+            .instructions {
+                max-width: none;
+                order: 3;
+                padding: 20px;
+            }
+
             .top-panel {
                 margin-bottom: 8px;
             }
 
             .display {
-                padding: 15px 10px;
+                padding: 12px;
             }
 
             .buttons-grid {
@@ -526,510 +716,593 @@
             .instruction-toggle h3 {
                 font-size: 20px;
             }
+
+            .history-panel h2 {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
 <body class="dark-theme">
-    <div class="main-container">
-        <div class="instructions">
-            <div class="instruction-section">
-                <button class="instruction-toggle" id="howToToggle">
-                    <h3>Як користуватися? <span class="toggle-arrow">▼</span></h3>
-                </button>
-                <ul class="instruction-list hidden" id="howToList">
-                    <li><strong>Крок 1:</strong> Натискайте кнопки з оцінками від 1 до 12</li>
-                    <li><strong>Крок 2:</strong> Натисніть "Результат"</li>
-                    <li><strong>Крок 3:</strong> Перегляньте середній бал та рівень</li>
-                    <li><strong>Крок 4:</strong> Використовуйте "Графік" для аналізу</li>
-                </ul>
-            </div>
+<div class="main-container">
+    <div class="instructions">
+        <div class="instruction-section">
+            <button class="instruction-toggle" id="howToToggle">
+                <h3>Як користуватися? <span class="toggle-arrow">▼</span></h3>
+            </button>
+            <ul class="instruction-list hidden" id="howToList">
+                <li><strong>Крок 1:</strong> Натискайте кнопки з оцінками від 1 до 12</li>
+                <li><strong>Крок 2:</strong> Натисніть "Результат"</li>
+                <li><strong>Крок 3:</strong> Перегляньте середній бал та рівень</li>
+                <li><strong>Крок 4:</strong> У історії можна редагувати ім'я учня, ділитися посиланням або видалити запис</li>
+            </ul>
+        </div>
 
-            <div class="instruction-section keyboard-section">
-                <h3>Клавіши</h3>
-                <p>&nbsp;</p>
-                <div class="keyboard-list">
-                    <div class="key">1-12</div>
-                    <div class="description">Ввести оцінку</div>
-                    <div class="key">Enter</div>
-                    <div class="description">Результат</div>
-                    <div class="key">←</div>
-                    <div class="description">Видалити останню</div>
-                    <div class="key">Del</div>
-                    <div class="description">Очистити все</div>
-                </div>
-            </div>
-
-            <div class="instruction-section tips-section">
-                <h3>Поради</h3>
-                <ul class="instruction-list">
-                    <li><strong>Рівні:</strong>
-                        <br>• 10-12: Високий
-                        <br>• 7-9: Достатній
-                        <br>• 4-6: Середній
-                        <br>• 1-3: Початковий
-                    </li>
-                </ul>
+        <div class="instruction-section keyboard-section">
+            <h3>Клавіши</h3>
+            <p>&nbsp;</p>
+            <div class="keyboard-list">
+                <div class="key">1-12</div>
+                <div class="description">Ввести оцінку</div>
+                <div class="key">Enter</div>
+                <div class="description">Результат</div>
+                <div class="key">←</div>
+                <div class="description">Видалити останню</div>
+                <div class="key">Del</div>
+                <div class="description">Очистити все</div>
             </div>
         </div>
 
-        <div class="container">
-            <div class="top-panel">
+        <div class="instruction-section tips-section">
+            <h3>Поради</h3>
+            <ul class="instruction-list">
+                <li><strong>Рівні:</strong>
+                    <br>• 10-12: Високий
+                    <br>• 7-9: Достатній
+                    <br>• 4-6: Середній
+                    <br>• 1-3: Початковий
+                </li>
+                <li><strong>Історія:</strong> Натисніть на ім'я, щоб змінити. Натисніть 📤, щоб скопіювати посилання. Натисніть ×, щоб видалити запис.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="top-panel">
+            <div class="left-group">
                 <button class="theme-btn" id="themeBtn">🌙</button>
-                <button class="graph-btn" id="graphBtn">Графік</button>
+                <button class="install-btn-top" id="installBtnTop" title="Встановити додаток">📥</button>
             </div>
+            <button class="graph-btn" id="graphBtn">Графік</button>
+        </div>
 
-            <div class="display">
-                <div class="display-main" id="displayMain">0</div>
-                <div class="display-info" id="displayInfo"></div>
-            </div>
+        <div class="display">
+            <div class="display-main" id="displayMain">0</div>
+            <div class="display-info" id="displayInfo"></div>
+        </div>
 
-            <div class="checkbox-container">
-                <label>
-                    <input type="checkbox" id="showLevel" checked>
-                    Показувати рівень
-                </label>
-            </div>
+        <div class="checkbox-container">
+            <label>
+                <input type="checkbox" id="showLevel" checked>
+                Показувати рівень
+            </label>
+        </div>
 
-            <div class="buttons-grid">
-                <button class="btn" data-grade="1">1</button>
-                <button class="btn" data-grade="2">2</button>
-                <button class="btn" data-grade="3">3</button>
-                <button class="btn" data-grade="4">4</button>
-                <button class="btn" data-grade="5">5</button>
-                <button class="btn" data-grade="6">6</button>
-                <button class="btn" data-grade="7">7</button>
-                <button class="btn" data-grade="8">8</button>
-                <button class="btn" data-grade="9">9</button>
-                <button class="btn" data-grade="10">10</button>
-                <button class="btn" data-grade="11">11</button>
-                <button class="btn" data-grade="12">12</button>
-                <button class="btn btn-result" id="resultBtn">Результат</button>
-                <button class="btn" id="backspaceBtn">←</button>
-            </div>
+        <div class="buttons-grid">
+            <button class="btn" data-grade="1">1</button>
+            <button class="btn" data-grade="2">2</button>
+            <button class="btn" data-grade="3">3</button>
+            <button class="btn" data-grade="4">4</button>
+            <button class="btn" data-grade="5">5</button>
+            <button class="btn" data-grade="6">6</button>
+            <button class="btn" data-grade="7">7</button>
+            <button class="btn" data-grade="8">8</button>
+            <button class="btn" data-grade="9">9</button>
+            <button class="btn" data-grade="10">10</button>
+            <button class="btn" data-grade="11">11</button>
+            <button class="btn" data-grade="12">12</button>
+            <button class="btn btn-result" id="resultBtn">Результат</button>
+            <button class="btn" id="backspaceBtn">←</button>
         </div>
     </div>
 
-    <!-- Модальне вікно для графіка -->
-    <div id="chartModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeModal">&times;</span>
-            <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-color);">Розподіл оцінок</h2>
-            <div class="chart-container">
-                <canvas id="gradeChart"></canvas>
+    <div class="history-panel">
+        <h2>
+            📊 Історія
+            <button class="clear-history-btn" id="clearHistoryBtn">Очистити</button>
+        </h2>
+        <div class="history-list" id="historyList">
+            <div class="no-history" id="noHistory">
+                <p>Поки що немає результатів.<br>
+                   Зробіть перший підрахунок!</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <h6>Автор: Ігор Шуляк&nbsp;</h6>
+                <h5>Група в Телеграм: <a href="https://t.me/ittchr">https://t.me/ittchr</a>&nbsp;</h5>
+                <h6>або шукайте в Телеграм @ittchr</h6>
             </div>
-            <button id="downloadChartBtn" class="download-btn">Завантажити графік</button>
         </div>
     </div>
+</div>
 
-    <!-- PWA Install Prompt -->
-    <div id="installPrompt" class="install-prompt" style="display: none;">
-        <div class="install-content" id="installPromptText">
-            <!-- Текст буде динамічним -->
+<!-- Модальне вікно для графіка -->
+<div id="chartModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-color);">Розподіл оцінок</h2>
+        <div class="chart-container">
+            <canvas id="gradeChart"></canvas>
         </div>
+        <button id="downloadChartBtn" class="download-btn">Завантажити графік</button>
     </div>
+</div>
 
-    <script>
-        class GradeCalculator {
-            constructor() {
-                this.grades = [];
-                this.inputBuffer = "";
-                this.timer = null;
-                this.settings = this.loadSettings();
-                this.deferredPrompt = null;
+<!-- Спливаюче повідомлення -->
+<div id="toast" class="toast">Посилання скопійовано!</div>
 
-                this.displayMain = document.getElementById('displayMain');
-                this.displayInfo = document.getElementById('displayInfo');
-                this.themeBtn = document.getElementById('themeBtn');
-                this.graphBtn = document.getElementById('graphBtn');
-                this.showLevelCheckbox = document.getElementById('showLevel');
-                this.resultBtn = document.getElementById('resultBtn');
-                this.backspaceBtn = document.getElementById('backspaceBtn');
-                this.chartModal = document.getElementById('chartModal');
-                this.closeModal = document.getElementById('closeModal');
-                this.downloadChartBtn = document.getElementById('downloadChartBtn');
-                this.installPrompt = document.getElementById('installPrompt');
-                this.installPromptText = document.getElementById('installPromptText');
+<script>
+    class GradeCalculator {
+        constructor() {
+            this.grades = [];
+            this.inputBuffer = "";
+            this.timer = null;
+            this.settings = this.loadSettings();
+            this.history = this.loadHistory();
+            this.chart = null;
 
-                this.chart = null;
+            this.displayMain = document.getElementById('displayMain');
+            this.displayInfo = document.getElementById('displayInfo');
+            this.themeBtn = document.getElementById('themeBtn');
+            this.graphBtn = document.getElementById('graphBtn');
+            this.showLevelCheckbox = document.getElementById('showLevel');
+            this.resultBtn = document.getElementById('resultBtn');
+            this.backspaceBtn = document.getElementById('backspaceBtn');
+            this.chartModal = document.getElementById('chartModal');
+            this.closeModal = document.getElementById('closeModal');
+            this.downloadChartBtn = document.getElementById('downloadChartBtn');
+            this.installBtnTop = document.getElementById('installBtnTop');
+            this.historyList = document.getElementById('historyList');
+            this.noHistory = document.getElementById('noHistory');
+            this.clearHistoryBtn = document.getElementById('clearHistoryBtn');
+            this.toast = document.getElementById('toast');
+        }
 
-                this.init();
-            }
+        init() {
+            this.applyTheme();
+            this.showLevelCheckbox.checked = this.settings.showLevel !== false;
+            this.renderHistory();
 
-            init() {
-                this.applyTheme();
-                this.showLevelCheckbox.checked = this.settings.showLevel !== false;
+            // Інструкції
+            const toggle = document.getElementById('howToToggle');
+            const list = document.getElementById('howToList');
+            const arrow = toggle.querySelector('.toggle-arrow');
+            toggle.addEventListener('click', () => {
+                const isHidden = list.classList.contains('hidden');
+                list.classList.toggle('hidden', !isHidden);
+                arrow.classList.toggle('rotated', !isHidden);
+            });
 
-                const toggle = document.getElementById('howToToggle');
-                const list = document.getElementById('howToList');
-                const arrow = toggle.querySelector('.toggle-arrow');
+            // Події
+            this.themeBtn.addEventListener('click', () => this.toggleTheme());
+            this.graphBtn.addEventListener('click', () => this.showHistogram());
+            this.resultBtn.addEventListener('click', () => this.calculateResult());
+            this.backspaceBtn.addEventListener('click', () => this.backspace());
+            this.showLevelCheckbox.addEventListener('change', () => this.saveSettings());
+            this.closeModal.addEventListener('click', () => this.closeChart());
+            this.downloadChartBtn.addEventListener('click', () => this.downloadChart());
+            this.clearHistoryBtn.addEventListener('click', () => this.clearHistory());
 
-                toggle.addEventListener('click', () => {
-                    const isHidden = list.classList.contains('hidden');
-                    if (isHidden) {
-                        list.classList.remove('hidden');
-                        arrow.classList.add('rotated');
-                    } else {
-                        list.classList.add('hidden');
-                        arrow.classList.remove('rotated');
-                    }
+            this.installBtnTop.addEventListener('click', () => this.showInstallGuide());
+
+            document.querySelectorAll('[data-grade]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    this.addButtonAnimation(e.target);
+                    this.addGrade(e.target.dataset.grade);
                 });
+            });
 
-                this.themeBtn.addEventListener('click', () => this.toggleTheme());
-                this.graphBtn.addEventListener('click', () => this.showHistogram());
-                this.resultBtn.addEventListener('click', () => this.calculateResult());
-                this.backspaceBtn.addEventListener('click', () => this.backspace());
-                this.showLevelCheckbox.addEventListener('change', () => this.saveSettings());
-                this.closeModal.addEventListener('click', () => this.closeChart());
-                this.downloadChartBtn.addEventListener('click', () => this.downloadChart());
+            document.addEventListener('keydown', (e) => this.keyPress(e));
+            this.chartModal.addEventListener('click', (e) => {
+                if (e.target === this.chartModal) this.closeChart();
+            });
 
-                document.querySelectorAll('[data-grade]').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        this.addButtonAnimation(e.target);
-                        this.addGrade(e.target.dataset.grade);
-                    });
-                });
+            this.registerServiceWorker();
+        }
 
-                document.addEventListener('keydown', (e) => this.keyPress(e));
-                this.chartModal.addEventListener('click', (e) => {
-                    if (e.target === this.chartModal) this.closeChart();
-                });
+        showInstallGuide() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            const isDesktop = !isIOS && !isAndroid;
 
-                this.registerServiceWorker();
-                this.setupInstallPrompt();
+            let message = '';
+
+            if (isIOS) {
+                message = 'Щоб встановити додаток:\n1. Натисніть на 🛠 (поділитися)\n2. Оберіть "Додати на головний екран"';
+            } else if (isAndroid) {
+                message = 'Щоб встановити додаток:\n1. Натисніть на меню в браузері (три крапки)\n2. Оберіть "Встановити додаток" або "Додати на головний екран"';
+            } else {
+                message = 'Щоб встановити додаток:\n1. Натисніть на меню Chrome (три крапки)\n2. Оберіть "Встановити додаток" або "Додати на головний екран"';
             }
 
-            setupInstallPrompt() {
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            alert(message);
+        }
 
-                if (!isMobile || this.isAppInstalled()) return;
-
-                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                    this.showIosInstallPrompt();
-                    return;
-                }
-
-                window.addEventListener('beforeinstallprompt', (e) => {
-                    e.preventDefault();
-                    this.deferredPrompt = e;
-
-                    if (!localStorage.getItem('pwaInstallDismissed')) {
-                        setTimeout(() => this.showAndroidInstallPrompt(), 1500);
-                    }
-                });
-            }
-
-            showAndroidInstallPrompt() {
-                this.installPromptText.innerHTML = `
-                    <div>Хочете встановити додаток "Середній бал"?</div>
-                    <div style="font-size:12px; opacity:0.8; margin-top:4px;">Працюватиме швидко і без інтернету</div>
-                    <div class="install-buttons">
-                        <button id="installBtn" class="install-btn">Встановити</button>
-                        <button id="installLaterBtn" class="install-btn install-btn-outline">Не зараз</button>
-                    </div>
-                `;
-                this.installPrompt.style.display = 'block';
-
-                document.getElementById('installBtn').addEventListener('click', () => {
-                    if (this.deferredPrompt) {
-                        this.deferredPrompt.prompt();
-                        this.deferredPrompt.userChoice.then(() => {
-                            this.deferredPrompt = null;
-                        });
-                    }
-                    this.installPrompt.style.display = 'none';
-                    localStorage.setItem('pwaInstallDismissed', 'true');
-                });
-
-                document.getElementById('installLaterBtn').addEventListener('click', () => {
-                    this.installPrompt.style.display = 'none';
-                    localStorage.setItem('pwaInstallDismissed', 'true');
-                });
-            }
-
-            showIosInstallPrompt() {
-                if (localStorage.getItem('pwaInstallDismissed')) return;
-
-                this.installPromptText.innerHTML = `
-                    <div>Додайте на головний екран!</div>
-                    <div style="font-size:12px; opacity:0.8;">Натисніть <b>поділитися</b> → "Додати на головний екран"</div>
-                    <div class="install-buttons">
-                        <button id="iosInstallDone" class="install-btn">Зрозуміло</button>
-                    </div>
-                `;
-                this.installPrompt.style.display = 'block';
-
-                document.getElementById('iosInstallDone').addEventListener('click', () => {
-                    this.installPrompt.style.display = 'none';
-                    localStorage.setItem('pwaInstallDismissed', 'true');
-                });
-            }
-
-            isAppInstalled() {
-                return window.matchMedia('(display-mode: standalone)').matches ||
-                       window.navigator.standalone === true;
-            }
-
-            registerServiceWorker() {
-                if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.register('service-worker.js')
-                        .then(reg => console.log('SW registered'))
-                        .catch(err => console.log('SW registration failed', err));
-                }
-            }
-
-            addButtonAnimation(button) {
-                button.classList.add('btn-animate');
-                setTimeout(() => button.classList.remove('btn-animate'), 300);
-            }
-
-            addGrade(grade) {
-                this.grades.push(parseInt(grade));
-                this.inputBuffer = "";
-                this.updateDisplay();
-            }
-
-            backspace() {
-                if (this.inputBuffer) {
-                    this.inputBuffer = this.inputBuffer.slice(0, -1);
-                } else if (this.grades.length > 0) {
-                    this.grades.pop();
-                }
-                this.updateDisplay();
-            }
-
-            clearAll() {
-                this.grades = [];
-                this.inputBuffer = "";
-                this.updateDisplay();
-            }
-
-            updateDisplay() {
-                let text = this.grades.join(" ");
-                if (this.inputBuffer) {
-                    text += (text ? " " : "") + this.inputBuffer;
-                }
-                this.displayMain.textContent = text || "0";
-                this.displayInfo.textContent = "";
-                this.displayMain.classList.remove('error');
-            }
-
-            calculateResult() {
-                if (this.inputBuffer) {
-                    try {
-                        const g = parseInt(this.inputBuffer);
-                        if (g >= 1 && g <= 12) {
-                            this.grades.push(g);
-                        }
-                        this.inputBuffer = "";
-                    } catch (e) {
-                        this.inputBuffer = "";
-                    }
-                }
-
-                if (this.grades.length === 0) {
-                    this.displayError("Помилка: введіть оцінки!");
-                    return;
-                }
-
-                if (this.grades.some(g => g < 1 || g > 12)) {
-                    this.displayError("Помилка: 1-12!");
-                    this.grades = [];
-                    return;
-                }
-
-                const avg = this.grades.reduce((a, b) => a + b, 0) / this.grades.length;
-                this.displayMain.textContent = `СЕРЕДНЯ ОЦІНКА: ${avg.toFixed(2)}`;
-
-                let infoText = "";
-                if (this.showLevelCheckbox.checked) {
-                    infoText = `РІВЕНЬ: ${this.getLevel(avg).toUpperCase()}<br>`;
-                }
-                infoText += `Макс: ${Math.max(...this.grades)}, Мін: ${Math.min(...this.grades)}, Оцінок: ${this.grades.length}`;
-                this.displayInfo.innerHTML = infoText;
-
-                this.grades = [];
-                this.inputBuffer = "";
-            }
-
-            displayError(message) {
-                this.displayMain.textContent = message;
-                this.displayMain.classList.add('error');
-                this.displayInfo.textContent = "";
-            }
-
-            getLevel(avg) {
-                if (avg >= 10) return "Високий";
-                if (avg >= 7) return "Достатній";
-                if (avg >= 4) return "Середній";
-                return "Початковий";
-            }
-
-            showHistogram() {
-                if (this.grades.length === 0) {
-                    this.displayError("Немає даних для графіка!");
-                    return;
-                }
-
-                const counts = {};
-                for (let i = 1; i <= 12; i++) counts[i] = 0;
-                this.grades.forEach(grade => counts[grade]++);
-
-                this.chartModal.style.display = 'block';
-                const ctx = document.getElementById('gradeChart').getContext('2d');
-
-                if (this.chart) this.chart.destroy();
-
-                const backgroundColor = this.settings.theme === 'dark' ? '#2b2b2b' : '#ffffff';
-                this.chart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: Object.keys(counts),
-                        datasets: [{
-                            label: 'Кількість',
-                            data: Object.values(counts),
-                            backgroundColor: '#3A5A9E',
-                            borderColor: '#2E4A82',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    color: this.settings.theme === 'dark' ? '#fff' : '#333'
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1,
-                                    color: this.settings.theme === 'dark' ? '#fff' : '#333'
-                                },
-                                grid: {
-                                    color: this.settings.theme === 'dark' ? '#555' : '#ddd'
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Оцінка',
-                                    color: this.settings.theme === 'dark' ? '#fff' : '#333'
-                                },
-                                ticks: {
-                                    color: this.settings.theme === 'dark' ? '#fff' : '#333'
-                                },
-                                grid: {
-                                    color: this.settings.theme === 'dark' ? '#555' : '#ddd'
-                                }
-                            }
-                        }
-                    },
-                    plugins: [{
-                        id: 'customCanvasBackgroundColor',
-                        beforeDraw: (chart) => {
-                            const ctx = chart.canvas.getContext('2d');
-                            ctx.fillStyle = backgroundColor;
-                            ctx.fillRect(0, 0, chart.width, chart.height);
-                        }
-                    }]
-                });
-
-                this.downloadChartBtn.style.display = 'block';
-            }
-
-            closeChart() {
-                this.chartModal.style.display = 'none';
-                if (this.chart) {
-                    this.chart.destroy();
-                    this.chart = null;
-                }
-            }
-
-            downloadChart() {
-                if (!this.chart) return;
-                const link = document.createElement('a');
-                link.href = this.chart.canvas.toDataURL('image/png');
-                link.download = `графік-оцінок-${new Date().toISOString().slice(0, 10)}.png`;
-                link.click();
-            }
-
-            keyPress(event) {
-                const key = event.key;
-                if (key >= '0' && key <= '9') {
-                    const digit = key;
-                    const buff = this.inputBuffer + digit;
-                    try {
-                        const num = parseInt(buff);
-                        if (num > 12) return;
-                    } catch (e) {
-                        this.inputBuffer = "";
-                        this.updateDisplay();
-                        return;
-                    }
-                    this.inputBuffer = buff;
-                    this.updateDisplay();
-
-                    if (digit === "1" && this.inputBuffer === "1") {
-                        if (this.timer) clearTimeout(this.timer);
-                        this.timer = setTimeout(() => this.processBuffer(), 400);
-                    } else if (["10", "11", "12"].includes(this.inputBuffer)) {
-                        this.addGrade(this.inputBuffer);
-                    } else if (this.inputBuffer.match(/^[2-9]$/)) {
-                        this.addGrade(this.inputBuffer);
-                    }
-                } else if (key === "Backspace") {
-                    this.backspace();
-                } else if (key === "Delete") {
-                    this.clearAll();
-                } else if (key === "Enter") {
-                    this.calculateResult();
-                }
-            }
-
-            processBuffer() {
-                if (!this.inputBuffer) return;
-                try {
-                    const g = parseInt(this.inputBuffer);
-                    if (g >= 1 && g <= 12) {
-                        this.addGrade(g);
-                    }
-                } catch (e) {}
-                this.inputBuffer = "";
-                this.updateDisplay();
-            }
-
-            toggleTheme() {
-                const newTheme = this.settings.theme === 'dark' ? 'light' : 'dark';
-                this.settings.theme = newTheme;
-                this.saveSettings();
-                this.applyTheme();
-            }
-
-            applyTheme() {
-                const theme = this.settings.theme || 'dark';
-                document.body.className = theme + '-theme';
-                this.themeBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
-            }
-
-            saveSettings() {
-                this.settings.showLevel = this.showLevelCheckbox.checked;
-                this.settings.theme = this.settings.theme || 'dark';
-                localStorage.setItem('gradeCalculatorSettings', JSON.stringify(this.settings));
-            }
-
-            loadSettings() {
-                const saved = localStorage.getItem('gradeCalculatorSettings');
-                return saved ? JSON.parse(saved) : { theme: 'dark', showLevel: true };
+        registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.log('SW failed', err));
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            new GradeCalculator();
-        });
-    </script>
+        addButtonAnimation(button) {
+            button.classList.add('btn-blink');
+            setTimeout(() => {
+                button.classList.remove('btn-blink');
+            }, 200);
+        }
+
+        addGrade(grade) {
+            this.grades.push(parseInt(grade));
+            this.inputBuffer = "";
+            this.updateDisplay();
+        }
+
+        backspace() {
+            if (this.inputBuffer) this.inputBuffer = this.inputBuffer.slice(0, -1);
+            else if (this.grades.length > 0) this.grades.pop();
+            this.updateDisplay();
+        }
+
+        clearAll() {
+            this.grades = [];
+            this.inputBuffer = "";
+            this.updateDisplay();
+        }
+
+        updateDisplay() {
+            let text = this.grades.join(" ");
+            if (this.inputBuffer) text += (text ? " " : "") + this.inputBuffer;
+            this.displayMain.textContent = text || "0";
+            this.displayInfo.textContent = "";
+            this.displayMain.classList.remove('error');
+            this.adjustFontSize();
+        }
+
+        adjustFontSize() {
+            const display = this.displayMain;
+            const fullText = display.textContent;
+            const lines = fullText.split(' ').length;
+            let fontSize = 22;
+            if (lines > 15) fontSize = 14;
+            else if (lines > 10) fontSize = 16;
+            else if (lines > 7) fontSize = 18;
+            else if (lines > 5) fontSize = 20;
+            display.style.fontSize = `${fontSize}px`;
+        }
+
+        calculateResult() {
+            if (this.inputBuffer) {
+                const g = parseInt(this.inputBuffer);
+                if (g >= 1 && g <= 12) this.grades.push(g);
+                this.inputBuffer = "";
+            }
+
+            if (this.grades.length === 0) {
+                this.displayError("Помилка: введіть оцінки!");
+                return;
+            }
+
+            if (this.grades.some(g => g < 1 || g > 12)) {
+                this.displayError("Помилка: 1-12!");
+                this.grades = [];
+                return;
+            }
+
+            const avg = this.grades.reduce((a, b) => a + b, 0) / this.grades.length;
+            this.displayMain.textContent = `СЕРЕДНЯ ОЦІНКА: ${avg.toFixed(2)}`;
+
+            let infoText = "";
+            if (this.showLevelCheckbox.checked) {
+                infoText = `РІВЕНЬ: ${this.getLevel(avg).toUpperCase()}<br>`;
+            }
+            infoText += `Макс: ${Math.max(...this.grades)}, Мін: ${Math.min(...this.grades)}, Оцінок: ${this.grades.length}`;
+            this.displayInfo.innerHTML = infoText;
+
+            this.addToHistory(this.grades.slice(), avg, 'Без імені');
+
+            this.grades = [];
+            this.inputBuffer = "";
+            this.adjustFontSize();
+        }
+
+        displayError(message) {
+            this.displayMain.textContent = message;
+            this.displayMain.classList.add('error');
+            this.displayInfo.textContent = "";
+        }
+
+        getLevel(avg) {
+            if (avg >= 10) return "Високий";
+            if (avg >= 7) return "Достатній";
+            if (avg >= 4) return "Середній";
+            return "Початковий";
+        }
+
+        addToHistory(grades, average, studentName) {
+            const historyItem = {
+                id: Date.now(),
+                grades: grades,
+                average: average,
+                level: this.getLevel(average),
+                timestamp: new Date().toLocaleString('uk-UA'),
+                max: Math.max(...grades),
+                min: Math.min(...grades),
+                count: grades.length,
+                studentName: studentName
+            };
+
+            this.history.unshift(historyItem);
+
+            if (this.history.length > 30) {
+                this.history = this.history.slice(0, 30);
+            }
+
+            this.saveHistory();
+            this.renderHistory();
+        }
+
+        renderHistory() {
+            if (this.history.length === 0) {
+                this.noHistory.style.display = 'block';
+                this.historyList.innerHTML = '';
+                this.historyList.appendChild(this.noHistory);
+                return;
+            }
+
+            this.noHistory.style.display = 'none';
+            this.historyList.innerHTML = '';
+
+            this.history.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item' + (index === 0 ? ' recent' : '');
+
+                const encoded = encodeURIComponent(JSON.stringify({ grades: item.grades, name: item.studentName, ts: item.timestamp }));
+                const fullUrl = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
+
+                historyItem.innerHTML = `
+                    <button class="delete-item-btn" title="Видалити запис" onclick="event.stopPropagation(); this.deleteItem(${item.id})">×</button>
+                    <div class="history-header">
+                        <button class="share-btn" title="Поділитися" onclick="event.stopPropagation(); this.copyShareLink('${fullUrl}', this)">📤</button>
+                        <div class="history-student-name" contenteditable="true" data-id="${item.id}">${item.studentName}</div>
+                        <span class="history-timestamp">${item.timestamp}</span>
+                    </div>
+                    <div class="history-grades">${item.grades.join(', ')}</div>
+                    <div class="history-result">Середній бал: ${item.average.toFixed(2)}</div>
+                    <div class="history-level">Рівень: ${item.level} | Макс: ${item.max} | Мін: ${item.min} | Кількість: ${item.count}</div>
+                `;
+
+                this.historyList.appendChild(historyItem);
+            });
+
+            const self = this;
+
+            // Обробник для кнопки видалення
+            this.historyList.querySelectorAll('.delete-item-btn').forEach(btn => {
+                btn.deleteItem = function(id) {
+                    if (confirm('Ви впевнені, що хочете видалити цей запис?')) {
+                        self.history = self.history.filter(h => h.id !== id);
+                        self.saveHistory();
+                        self.renderHistory();
+                    }
+                };
+            });
+
+            // Обробник для кнопки "Поділитися"
+            this.historyList.querySelectorAll('.share-btn').forEach(btn => {
+                btn.copyShareLink = function(url, context) {
+                    navigator.clipboard.writeText(url)
+                        .then(() => {
+                            self.showToast();
+                        })
+                        .catch(err => {
+                            console.error('Не вдалося скопіювати:', err);
+                            self.showToast('Помилка копіювання', 'red');
+                        });
+                };
+            });
+
+            // Обробник редагування імені
+            this.historyList.querySelectorAll('.history-student-name').forEach(el => {
+                el.addEventListener('blur', () => {
+                    const id = parseInt(el.dataset.id);
+                    const newName = el.textContent.trim() || 'Без імені';
+                    const item = self.history.find(h => h.id === id);
+                    if (item) {
+                        item.studentName = newName;
+                        self.saveHistory();
+                    }
+                });
+            });
+        }
+
+        showToast(msg = 'Посилання скопійовано!', color = '#4CAF50') {
+            this.toast.textContent = msg;
+            this.toast.style.background = color;
+            this.toast.classList.add('show');
+            setTimeout(() => {
+                this.toast.classList.remove('show');
+            }, 2500);
+        }
+
+        clearHistory() {
+            if (confirm('Очистити всю історію?')) {
+                this.history = [];
+                this.saveHistory();
+                this.renderHistory();
+            }
+        }
+
+        saveHistory() {
+            try {
+                localStorage.setItem('gradeCalculatorHistory', JSON.stringify(this.history));
+            } catch (e) {
+                console.warn('Не вдалося зберегти історію:', e);
+            }
+        }
+
+        loadHistory() {
+            try {
+                const saved = localStorage.getItem('gradeCalculatorHistory');
+                return saved ? JSON.parse(saved) : [];
+            } catch (e) {
+                console.warn('Не вдалося завантажити історію:', e);
+                return [];
+            }
+        }
+
+        showHistogram() {
+            if (this.grades.length === 0) {
+                this.displayError("Немає даних для графіка!");
+                return;
+            }
+
+            const counts = Array(13).fill(0);
+            this.grades.forEach(g => counts[g]++);
+
+            this.chartModal.style.display = 'block';
+            const ctx = document.getElementById('gradeChart').getContext('2d');
+            if (this.chart) this.chart.destroy();
+
+            const theme = this.settings.theme || 'dark';
+            const backgroundColor = theme === 'dark' ? '#2b2b2b' : '#ffffff';
+
+            this.chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({ length: 12 }, (_, i) => i + 1),
+                    datasets: [{
+                        label: 'Кількість',
+                        data: counts.slice(1, 13),
+                        backgroundColor: '#3A5A9E',
+                        borderColor: '#2E4A82',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: theme === 'dark' ? '#fff' : '#333' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1, color: theme === 'dark' ? '#fff' : '#333' },
+                            grid: { color: theme === 'dark' ? '#555' : '#ddd' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Оцінка', color: theme === 'dark' ? '#fff' : '#333' },
+                            ticks: { color: theme === 'dark' ? '#fff' : '#333' },
+                            grid: { color: theme === 'dark' ? '#555' : '#ddd' }
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'customCanvasBackgroundColor',
+                    beforeDraw: (chart) => {
+                        const ctx = chart.canvas.getContext('2d');
+                        ctx.fillStyle = backgroundColor;
+                        ctx.fillRect(0, 0, chart.width, chart.height);
+                    }
+                }]
+            });
+
+            this.downloadChartBtn.style.display = 'block';
+        }
+
+        closeChart() {
+            this.chartModal.style.display = 'none';
+            if (this.chart) this.chart.destroy();
+            this.chart = null;
+        }
+
+        downloadChart() {
+            if (!this.chart) return;
+            const link = document.createElement('a');
+            link.href = this.chart.canvas.toDataURL('image/png');
+            link.download = `графік-оцінок-${new Date().toISOString().slice(0, 10)}.png`;
+            link.click();
+        }
+
+        keyPress(e) {
+            const key = e.key;
+            if (key >= '0' && key <= '9') {
+                const buff = this.inputBuffer + key;
+                const num = parseInt(buff);
+                if (num <= 12) {
+                    this.inputBuffer = buff;
+                    this.updateDisplay();
+                    if (buff === "1") {
+                        clearTimeout(this.timer);
+                        this.timer = setTimeout(() => this.processBuffer(), 400);
+                    } else if (["10", "11", "12"].includes(buff) || /^[2-9]$/.test(buff)) {
+                        this.addGrade(buff);
+                    }
+                }
+            } else if (key === "Backspace") this.backspace();
+            else if (key === "Delete") this.clearAll();
+            else if (key === "Enter") this.calculateResult();
+        }
+
+        processBuffer() {
+            if (this.inputBuffer && this.inputBuffer !== "1") {
+                const g = parseInt(this.inputBuffer);
+                if (g >= 1 && g <= 12) this.addGrade(g);
+            }
+            this.inputBuffer = "";
+            this.updateDisplay();
+        }
+
+        toggleTheme() {
+            const newTheme = (this.settings.theme || 'dark') === 'dark' ? 'light' : 'dark';
+            this.settings.theme = newTheme;
+            this.saveSettings();
+            this.applyTheme();
+        }
+
+        applyTheme() {
+            const theme = this.settings.theme || 'dark';
+            document.body.className = theme + '-theme';
+            this.themeBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
+        }
+
+        saveSettings() {
+            this.settings.showLevel = this.showLevelCheckbox.checked;
+            try {
+                localStorage.setItem('gradeCalculatorSettings', JSON.stringify(this.settings));
+            } catch (e) {
+                console.warn('Не вдалося зберегти налаштування:', e);
+            }
+        }
+
+        loadSettings() {
+            try {
+                const saved = localStorage.getItem('gradeCalculatorSettings');
+                return saved ? JSON.parse(saved) : { theme: 'dark', showLevel: true };
+            } catch (e) {
+                console.warn('Не вдалося завантажити налаштування:', e);
+                return { theme: 'dark', showLevel: true };
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        new GradeCalculator().init();
+    });
+</script>
 </body>
 </html>
